@@ -3,7 +3,8 @@ name: Print Project Details
 
 # Controls when the action will run.
 # This workflow now runs on pushes AND pull requests
-on: [push, pull_request]
+# One option for better security: use pull_target_request so the CI/CD code is the code on main instead of a bad actor branch.
+on: [push, pull_request_target]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -20,6 +21,14 @@ jobs:
         echo "Project Repository: ${{ github.repository }}"
         echo "Branch Name: ${{ github.ref_name }}"
         echo "Commit Hash: ${{ github.sha }}"
+
+    # NOTE: this is INSECURE, I just want to see how bad it can be
+    # This new step ONLY runs when the trigger is a pull request, but do it with the code from the target branch.
+    # This is only a defense IF you have branch protection rules and this code never gets merged into the trunk. Still pretty insecure...
+    - name: Print PR Title Using Target Branch Code
+      if: github.event_name == 'pull_request_target'
+      run: |
+        echo "PR Title: ${{ github.event.pull_request.title }}"
 
     # NOTE: this is INSECURE, I just want to see how bad it can be
     # This new step ONLY runs when the trigger is a pull request
