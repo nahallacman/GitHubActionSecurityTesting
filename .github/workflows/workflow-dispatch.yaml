@@ -19,7 +19,8 @@ jobs:
 
     steps:
       - name: Print the dispatch message (INTENTIONALLY VULNERABLE)
-        run: echo "The received message is: ${{ github.event.inputs.message }}"
+        run: |
+          echo "The received message is: ${{ github.event.inputs.message }}"
 
       - name: A safe step for comparison
         env:
