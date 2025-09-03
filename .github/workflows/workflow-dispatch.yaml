@@ -18,11 +18,7 @@ jobs:
       API_KEY: ${{ secrets.API_KEY }} # Make the secret available as an env var
 
     steps:
-      - name: Print the dispatch message (INTENTIONALLY VULNERABLE)
-        run: |
-          echo "The received message is: ${{ github.event.inputs.message }}"
-
-      - name: A safe step for comparison
+      - name: Print the dispatch message securely
         env:
           USER_MESSAGE: ${{ github.event.inputs.message }}
         run: |
