@@ -20,3 +20,10 @@ jobs:
         echo "Project Repository: ${{ github.repository }}"
         echo "Branch Name: ${{ github.ref_name }}"
         echo "Commit Hash: ${{ github.sha }}"
+
+    # NOTE: this is INSECURE, I just want to see how bad it can be
+    # This new step ONLY runs when the trigger is a pull request
+    - name: Print PR Title
+      if: github.event_name == 'pull_request'
+      run: |
+        echo "PR Title: ${{ github.event.pull_request.title }}"
