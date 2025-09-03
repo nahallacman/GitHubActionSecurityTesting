@@ -36,3 +36,13 @@ jobs:
       if: github.event_name == 'pull_request'
       run: |
         echo "PR Title: ${{ github.event.pull_request.title }}"
+
+    # This is supposed to be a safer version that escapes the PR title according to Gemini
+    - name: Print Escaped PR Title
+      env:
+        PR_TITLE: ${{ github.event.pull_request.title }}
+      run: |
+        echo "Thanks for the PR, $PR_TITLE!"
+        # You can now safely use the variable in scripts
+        # Always quote variables in shell scripts for extra safety
+        #./my-script.sh "$PR_TITLE"
