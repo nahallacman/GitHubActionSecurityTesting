@@ -1,0 +1,33 @@
+name: PR Comment CTF Trigger
+
+# This workflow runs when a comment is posted on a PR
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  dispatch-the-ctf:
+    # IMPORTANT: This condition ensures the workflow only runs for comments
+    # on pull requests that start with the specific command.
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run-ctf')
+    runs-on: ubuntu-latest
+    permissions:
+      # This permission is required to allow this workflow to trigger another one.
+      actions: write
+
+    steps:
+      - name: Extract message payload from comment
+        id: get_message
+        run: |
+          # This command strips the '/run-ctf ' prefix from the comment body
+          # and makes the rest of the string available for the next step.
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          MESSAGE_PAYLOAD=$(echo "$COMMENT_BODY" | sed 's/\/run-ctf //')
+          echo "message=$MESSAGE_PAYLOAD" >> $GITHUB_OUTPUT
+
+      - name: Trigger the vulnerable workflow dispatch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Triggering CTF workflow with payload: ${{ steps.get_message.outputs.message }}"
+          gh workflow run ctf-workflow.yml --ref ${{ github.event.repository.default_branch }} -f message='${{ steps.get_message.outputs.message }}'

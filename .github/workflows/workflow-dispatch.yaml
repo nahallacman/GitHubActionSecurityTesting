@@ -1,0 +1,30 @@
+name: Exfiltrate The Secret
+
+# This workflow is triggered manually
+# We will recieve a message and print it. Since we have severed the link between the string being a secret, the repo action runners should just print it with no censoring.
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Enter a message to print'
+        required: true
+        default: 'Hello world'
+        type: string
+
+jobs:
+  exfiltrate-the-flag:
+    runs-on: ubuntu-latest
+    env:
+      API_KEY: ${{ secrets.API_KEY }} # Make the secret available as an env var
+
+    steps:
+      - name: Print the dispatch message (INTENTIONALLY VULNERABLE)
+        run: |
+          echo "The received message is: ${{ github.event.inputs.message }}"
+
+      - name: A safe step for comparison
+        env:
+          USER_MESSAGE: ${{ github.event.inputs.message }}
+        run: |
+          echo "This is the safe way to print the message:"
+          echo "$USER_MESSAGE"
