@@ -3,7 +3,7 @@ name: Dispatch Workflow
 
 # Controls when the action will run.
 # This workflow now runs on pushes AND pull requests
-on: [push, pull_request]
+on: [pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -32,4 +32,4 @@ jobs:
           test_str='Hello from the trigger workflow!'
           echo "Triggering CTF workflow with payload: $test_str"
           # Use double quotes to ensure the variable expands correctly.
-          gh workflow run workflow-dispatch.yaml --ref ${{ github.ref }} -f message="$test_str"
+          gh workflow run workflow-dispatch.yaml --ref ${{ github.event.pull_request.head.ref }} -f message="$test_str"
