@@ -29,4 +29,8 @@ jobs:
           echo $API_KEY
 
           echo "Attempt 3: Send api key to a workflow dispatch, removing command line printing protection."
-          gh workflow run workflow-dispatch.yaml --ref ${{ github.event.pull_request.head.ref }} -f message="$API_KEY"
+          if gh workflow run workflow-dispatch.yaml --ref ${{ github.event.pull_request.head.ref }} -f message="$API_KEY"; then
+              echo "Workflow dispatched successfully."
+          else
+              echo "Failed to dispatch workflow."
+          fi
